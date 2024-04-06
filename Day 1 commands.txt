@@ -1,0 +1,611 @@
+show databases;
+
+select database();
+
+
+use vita;
+
+show tables;
+create database sqldb;
+
+
+use sqldb;
+
+select database();
+
+
+show tables;
+
+show variables like 'port';
+\q
+
+
+mysql -hlocalhost  -uroot -ptest@123 -P3306 -Dsqldb
+
+
+select database();
+
+\q
+
+mysql --help
+
+
+
+
+
+use sqldb;
+
+Create table t1 (c1 int, c2 varchar(100), c3 date);
+Show tables;
+
+Desc t1;
+
+
+Select * from t1;
+
+Select now();
+
+Select current_date();
+Select curdate();
+
+
+Select current_time();
+Select curtime();
+
+Insert into t1 (c1,c2,c3) values(1,'a','2023-10-21');
+
+
+
+
+Insert into t1 values(2,'b',current_date());
+
+
+Insert into t1(c1,c2) values(3,'c');
+
+
+
+Select * from t1 where c1=1;
+
+
+Select * from t1 where c1!=1;
+
+Select * from t1 where c1<>1;
+
+
+Select * from t1 where c1!=1;
+
+Select * from t1 where c3<>current_date();
+
+
+Select * from t1 where c3 is null;
+
+
+Select * from t1 where c3 is not null;
+
+
+Select * from t1  where c1 in (2,3);
+
+
+Select * from t1  where c1 not in (2,3);
+
+
+Select * from t1 where c1 between 1 and 3;
+
+
+Select * from t1 where c1 not between 1 and 3;
+
+
+Update t1 set c2='John',c3='2022-01-01' where c1=2;
+
+
+Show variables like '%commit%'
+
+Start transaction;
+Update t1 set c2='ABC',c3='2022-01-01' where c1=2;
+
+Rollback;
+
+
+
+Start transaction;
+Delete from t1 where c3 is null;
+
+Rollback;
+
+
+Alter table t1 add c4 int;
+
+
+Alter table t1 drop column c4 ;
+
+Alter table t1 add c4 int not null;
+
+Alter table t1 drop column c4 ;
+
+
+Alter table t1 add c4 int default 100  not null;
+
+Alter table t1 modify column c4 varchar(100) default 'abc'  not null;
+
+
+Insert into t1 (c1,c2,c3) values(4,'d','2021-12-12');
+
+
+Alter table t1 rename to t2;
+
+
+Alter table t2 rename to t1;
+
+
+Alter table t1 rename column c4 to a4;
+
+
+Create table t1_uk(c1 int unique, c2 varchar(100));
+
+
+Insert into t1_uk values(1,'a'); 
+
+fails
+Insert into t1_uk values(1,'a'); 
+
+works
+Insert into t1_uk values(null,'a'); 
+
+
+Create table t1_uk_comp
+(c1 int, c2 int, c3 varchar(100),
+unique(c1,c2));
+
+
+Insert into t1_uk_comp values(1,1,'a');
+
+Insert into t1_uk_comp values(1,2,'b');
+
+Insert into t1_uk_comp values(2,2,'c');
+
+Insert into t1_uk_comp values(2,2,'d');
+
+
+
+Create table t1_uk_multi
+(c1 int unique, c2 int unique , c3 varchar(100));
+
+
+
+Create table t1_pk(c1 int primary key, c2 varchar(100));
+
+
+Insert into t1_pk values(1,'a'); 
+
+fails
+Insert into t1_pk values(1,'a'); 
+
+fails
+Insert into t1_pk values(null,'a'); 
+
+
+Create table t1_pk_comp
+(c1 int, c2 int, c3 varchar(100),
+Primary key(c1,c2));
+
+
+Insert into t1_pk_comp values(1,1,'a');
+
+Insert into t1_pk_comp values(1,2,'b');
+
+Insert into t1_pk_comp values(2,2,'c');
+
+fails
+Insert into t1_pk_comp values(2,2,'d');
+
+
+Fails
+
+Create table t1_pk_multi
+(c1 int primary key, c2 int primary key, c3 varchar(100));
+
+
+
+Create table t_cc (eid int,ename varchar(100), salary int check(salary>1000));
+
+
+Fails
+
+Insert into t_cc values(1,'a',100);
+
+
+Works
+
+
+Insert into t_cc values(1,'a',1100);
+Insert into t_cc values(1,'a',null);
+
+
+Create table t_cc2 
+(eid int, ename varchar(100), gender varchar(10) check(gender in ('Male','Female')));
+
+
+Insert into t_cc2 value(1,'a','test');
+
+
+Insert into t_cc2 value(1,'a','male');
+
+
+
+Create table t_nn (id int, name varchar(100) not null);
+
+fails
+Insert into t_nn values(1,null);
+
+
+Create table t_parent(deptid int primary key , deptname varchar(100));
+
+
+Create table t_child
+(eid int, ename varchar(10),
+Deptid int,
+Foreign key fk1 (deptid) references t_parent(deptid));
+
+fails
+Insert into t_child values(1,'a',1);
+
+works
+Insert into t_child values(1,'a',null);
+
+
+Insert into t_parent values(1,'HR');
+
+Insert into t_child values(1,'a',1);
+
+
+
+Create table t_def(id int , salary int default 100);
+
+
+Insert into t_def values(1,null);
+
+
+Insert into t_def(id) values(1);
+
+select * from t1_uk;
+
+Select count(*) from t1_uk;
+
+
+Select count(c1) from t1_uk;
+
+Select count(c2) from t1_uk;
+
+Select count(distinct c2) from t1_uk;
+
+Select count(1) from t1_uk;
+
+Select count(1122121) from t1_uk;
+Select count('adsds') from t1_uk;
+
+Select sum(c1) from t1;
+
+
+Select avg(c1) from t1;
+
+
+Insert into t1 values(null,'d',null,100);
+
+Select avg(c1) from t1;
+
+
+
+Drop table t1;
+
+Create table t1 (c1 int, c2 varchar(10));
+
+
+Create table t2 (c1 int, c3 varchar(10));
+
+
+Insert into t1 values(1,'a'),(2,'b'),(3,'c');
+
+Insert into t2 values(3,'x'),(4,'y'),(5,'z');
+
+
+
+– cross join
+– Old Syntax
+Select * from t1,t2;
+
+
+– New Syntax Ansi Syntax
+
+Select * from t1 cross join t2;
+
+Ambiguous error
+Select c1,c2,c3 from t1 cross join t2;
+
+
+
+Select t1.c1,c2,c3 from t1 cross join t2;
+
+
+Select t1.*,c3 from t1 cross join t2;
+
+
+– Inner join
+– Old Syntax
+Select * from t1,t2 where t1.c1=t2.c1;
+
+
+– New Syntax Ansi Syntax
+
+Select * from t1 inner join t2 
+On t1.c1=t2.c1;
+
+
+Select * from t1  join t2 
+On t1.c1=t2.c1;
+
+Ambiguous error
+Select c1,c2,c3 from t1  inner join t2 
+On t1.c1=t2.c1;
+
+
+
+
+Select t1.c1,c2,c3 from t1 inner join t2 
+On t1.c1=t2.c1;
+
+
+
+Select t1.*,c3 from t1 inner join t2 
+On t1.c1=t2.c1;
+
+
+– New Syntax Ansi Syntax
+
+Select * from t1 left outer join t2 
+On t1.c1=t2.c1;
+
+
+Select * from t1 left join t2 
+On t1.c1=t2.c1;
+
+
+
+
+– New Syntax Ansi Syntax
+
+Select * from t1 right outer join t2 
+On t1.c1=t2.c1;
+
+
+Select * from t1  right join t2 
+On t1.c1=t2.c1;
+
+– not supported
+
+Select * from t1  full join t2 
+On t1.c1=t2.c1;
+
+
+Create table a (id int);
+Create table b (id int);
+
+
+Insert into a values(1),(2),(3);
+Insert into b values(3),(4),(5);
+
+
+Select * from a 
+Union
+Select * from b;
+
+
+Select * from b
+Union
+Select * from a;
+
+
+
+
+Select * from a 
+Union all
+Select * from b;
+
+
+Select * from b
+Union all
+Select * from a;
+
+
+Select * from a 
+intersect
+Select * from b;
+
+
+
+Select * from a 
+except
+Select * from b;
+
+– work around for full join
+Select * from t1 left outer join t2 
+On t1.c1=t2.c1
+union
+Select * from t1 right outer join t2 
+On t1.c1=t2.c1;
+
+
+Select * from a where id in (select id from b);
+
+
+Select * from a where id not in (select id from b);
+
+
+  create table dept ( deptid int primary key , deptname varchar(10));
+
+
+  create table emp ( eid int  , ename varchar(20) , salary int , deptid int references dept(deptid));
+
+
+
+  insert into dept values (1 , 'HR');
+  insert into dept values (2, 'IT');
+  insert into dept values (3, 'Finance'); 
+insert into dept values(4,'OPR');
+
+   insert into emp values (1,'a',1000,1);
+   insert into emp values (2,'b' , 1023 , 2);
+   insert into emp values (3,'c' , 23 , 3);
+   insert into emp values (4,'d' , 123 , 3);
+   insert into emp values (5,'e' , 102 , 1);
+   insert into emp values (6,'f' , 2023 , 3);
+   insert into emp values (7,'g' , 323 , 1);
+   insert into emp values (8,'h' , 523 , 2);
+   insert into emp values (9,'i' , 136 , 1);
+   insert into emp values (10,'j', 627 , 1);
+   insert into emp values (11,'k' , 978 , 3);
+   insert into emp values (12,'l' , 222 , 1);
+   insert into emp values (13,'m' , 746 , 1);
+   insert into emp values (14,'n' , 3223 , 1);
+   insert into emp values (15,'o' , 1999 , 3);
+   insert into emp values (16,'p' , 821 , 3);
+   insert into emp values (17,'q' , 324 , 1);
+   insert into emp values (18,'r' , 546 , 3);
+   insert into emp values (19,'s' , 717 , 2);
+   insert into emp values (20,'t' , 817 , 2);
+   insert into emp values (21,'u' , 888 , 3);
+   insert into emp values (22,'v' , 9029 , 1);
+   insert into emp values (23,'w' , 20001 , 3);
+   insert into emp values (24,'x' , 28222 , 1);
+   insert into emp values (25,'y' , 19212 , 3);
+   insert into emp values (26,'z' , 12111 , 1);
+   insert into emp values (27,'a1' , 3211 , 1);
+   insert into emp values (28,'a2' , 9238 , 1);
+   insert into emp values (29,'a3' , 653 , 3);
+   insert into emp values (30,'a4' , 44 , 1);
+   insert into emp values (31,'a5' , 3 , 2);
+   insert into emp values (32,'a6' , 16 , 1);
+   insert into emp values (33,'a7' , 14 , 2);
+   insert into emp values (34,'a8' , 845 , 1);
+   insert into emp values (35,'a9' , 135 , 3);
+   insert into emp values (36,'b1' , 1212 , 1);
+   insert into emp values (37,'b2' , 1242 , 2);
+   insert into emp values (38,'b3' , 4212 , 2);
+   insert into emp values (39,'b4' , 4444 , 3);
+   insert into emp values (40,'b5' , 555 , 1);
+   insert into emp values (41,'b6' , 1553 , 3);
+   insert into emp values (42,'b7' , 6432 , 1);
+   insert into emp values (43,'b8' , 4532 , 2);
+   insert into emp values (44,'b9' , 3355 , 1);
+   insert into emp values (45,'c1' , 2324 , 2);
+
+
+
+
+
+Select sum(salary) from emp;
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid;
+
+
+
+
+Select deptname,sum(salary) total_salary
+From emp join dept
+On emp.deptid=dept.deptid 
+Group by deptname;
+
+
+
+
+Select deptname,sum(salary) total_salary
+From emp e join dept d
+On e.deptid=d.deptid 
+Group by deptname;
+
+
+Select deptname,sum(salary) total_salary
+From emp e join dept d
+On e.deptid=d.deptid 
+Group by deptname
+Having sum(salary)>50000;
+
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid
+Order by deptname,salary desc;
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid
+Order by salary desc;
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid
+Order by salary desc limit 1;
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid
+Order by salary desc limit 5;
+
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid
+Order by salary desc limit 1,1;
+
+
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid
+Order by salary desc limit 2,1;
+
+
+
+
+Select ename,deptname,salary
+From emp join dept
+On emp.deptid=dept.deptid
+Order by salary desc limit 1  offset 2;
+
+
+Create table emp_mgr (eid int, ename varchar(10), mgrid int);
+
+insert into emp_mgr values(1,'a',4);
+insert into emp_mgr values(2,'b',4);
+insert into emp_mgr values(3,'c',4);
+insert into emp_mgr values(4,'d',4);
+insert into emp_mgr values(5,'e',6);
+insert into emp_mgr values(6,'f',6);
+insert into emp_mgr values(7,'g',6);
+
+Select e.mgrid,m.ename mgrname,e.eid,e.ename from emp_mgr e ,emp_mgr m
+Where 
+e.mgrid=m.eid and
+e.mgrid<>e.eid;
+
+
+Assignment
+
+Revise slides atleast three times. Each revision should not take more than 30 mins
+One at the start
+Another one at the end
+ In the morning before the session starts
+2. Redo all the queries we did in the class - 2 hours
+3. Try to do the 10 query assignment which uses emp and dept. Refer to the attachment- 1 hour
+4. Read Codd Rules- 30 mins
+5. Read upto 3NF with examples - 30 mins
+
+
